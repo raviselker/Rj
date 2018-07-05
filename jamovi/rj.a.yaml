@@ -1,0 +1,29 @@
+---
+name:  Rj
+title: R
+menuGroup: R
+version: '1.0.0'
+jas: '1.2'
+
+options:
+    - name: data
+      type: Data
+
+    - name: code
+      type: String
+      hidden: true
+
+    - name: R
+      title: R version
+      type: List
+      options:
+        - name: bundled
+          title: jamovi R
+        - name: external
+          title: System R
+    
+    - name: vars
+      type: Variables
+      hidden: true
+      
+...
