@@ -10,6 +10,13 @@ options:
       type: Data
 
     - name: code
+      default: |
+      
+        # the data set is available as a dataframe called `data`
+        # i.e. call
+        #
+        # summary(data)
+        
       type: String
       hidden: true
 

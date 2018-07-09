@@ -4,3 +4,4 @@ build/js
 build/R
 
 *.jmo
+.Rproj.user

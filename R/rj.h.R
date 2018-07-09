@@ -6,7 +6,7 @@ RjOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
     inherit = jmvcore::Options,
     public = list(
         initialize = function(
-            code = NULL,
+            code = "\n# the data set is available as a dataframe called `data`\n# i.e. call\n#\n# summary(data)\n",
             R = NULL,
             vars = NULL, ...) {
 
@@ -19,6 +19,7 @@ RjOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             private$..code <- jmvcore::OptionString$new(
                 "code",
                 code,
+                default="\n# the data set is available as a dataframe called `data`\n# i.e. call\n#\n# summary(data)\n",
                 hidden=TRUE)
             private$..R <- jmvcore::OptionList$new(
                 "R",
@@ -89,7 +90,7 @@ RjBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @export
 Rj <- function(
     data,
-    code,
+    code = "\n# the data set is available as a dataframe called `data`\n# i.e. call\n#\n# summary(data)\n",
     R,
     vars) {
 

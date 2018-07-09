@@ -58,7 +58,10 @@ const events = {
 	loaded: function(ui) {
 	    let $contents = ui.view.$el;
 		
-		let $advice = $(`<div style="text-align: right">\u2318 + Enter to run</div>`).prependTo($contents);
+		if (navigator.platform === 'MacIntel')
+		    $(`<div style="text-align: right">\u2318 + Shift + Enter to run</div>`).prependTo($contents);
+		else
+		    $(`<div style="text-align: right">Ctrl + Shift + Enter to run</div>`).prependTo($contents);
 		
 		this.$textarea = $(`
             <textarea
@@ -75,8 +78,32 @@ const events = {
         $("textarea").enableSmartTab();
         
         this.$textarea.on('keydown', (event) => {
-            if (event.keyCode === 13 && event.metaKey) {
-                ui.code.setValue(this.$textarea.val());
+            if (event.keyCode === 13 && (event.metaKey || event.ctrlKey) && event.shiftKey) {
+                
+                let script = this.$textarea.val();
+                
+                // replace " with '
+                script = script.replace(/"([^"\\]*(\\.[^"\\]*)*)"/g, (s) => "'" + s.substring(1, s.length - 1) + "'");
+                
+                this.requestData('columns').then((data) => {
+                    
+                    let allVars = data.columns.map(col => col.name);
+                    
+                    let match = script.match(/^\s*\#\s*\((.*)\)/);
+                    if (match !== null) {
+                        let content = match[1];
+                        let vars = content.split(',');
+                        vars = vars.map(s => s.trim());
+                        vars = vars.filter(v => allVars.includes(v));
+                        ui.vars.setValue(vars);
+                        ui.code.setValue(script);
+                    }
+                    else {
+                        ui.vars.setValue(allVars);
+                        ui.code.setValue(script);
+                    }
+                });
+                
                 event.stopPropagation();
             }
             else if (event.keyCode === 65 && event.metaKey) {
@@ -86,11 +113,7 @@ const events = {
 	},
 	
     update: function(ui) {
-        this.$textarea.text(ui.code.value());
-        this.requestData('columns').then((data) => {
-            let cols = data.columns.map(col => col.name);
-            ui.vars.setValue(cols);
-        });
+        this.$textarea.val(ui.code.value());
     }
 };
 
